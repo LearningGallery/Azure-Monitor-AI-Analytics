@@ -1,30 +1,40 @@
 # 🤖 AI-Powered Azure Log Analytics
 
-Enterprise-grade AI-powered log analytics solution for Azure infrastructure, focusing on Azure Monitor, Log Analytics Workspaces, and AMPLS.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Terraform 1.6+](https://img.shields.io/badge/terraform-1.6+-purple.svg)](https://www.terraform.io/)
+[![Azure](https://img.shields.io/badge/azure-%230072C6.svg?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
 
-## 🎯 Features
+> **Overview:** An enterprise-grade, AI-powered log analytics solution for Azure infrastructure. This project enhances Azure Monitor, Log Analytics Workspaces, and AMPLS with machine learning capabilities to provide automated insights, natural language querying, and predictive incident analysis.
 
-### Core Capabilities
-- ✅ **Multi-Workspace Aggregation**: Query across multiple Log Analytics workspaces
-- ✅ **AMPLS Integration**: Private network connectivity with Azure Monitor Private Link Scope
-- ✅ **OS-Level Monitoring**: Windows Event Logs, Syslog, Performance Counters
-- ✅ **Container Insights**: AKS pod logs, metrics, and health monitoring
-- ✅ **Azure Service Logs**: Activity Logs, Diagnostic Settings, Resource Logs
+---
 
-### AI/ML Features
-- 🤖 **Natural Language to KQL**: Convert plain English to KQL queries
-- 🔍 **Root Cause Analysis**: AI-powered incident investigation
-- 📊 **Anomaly Detection**: ML-based anomaly detection in metrics
-- 🎯 **Pattern Recognition**: Identify recurring log patterns
-- ⚠️ **Incident Prediction**: Predictive analytics for potential outages
+## 🎯 Enterprise Features
 
-### Enterprise Features
-- 🔐 **Private Link Support**: Full AMPLS integration
-- 📈 **Cost Optimization**: Log ingestion cost analysis
-- ✅ **Compliance**: GDPR, PDPA, MAS compliance helpers
-- 🔄 **Multi-Region**: Geo-redundant workspace support
+### ☁️ Core Cloud Capabilities
+* ✅ **Multi-Workspace Aggregation:** Seamlessly query across multiple Log Analytics workspaces.
+* ✅ **AMPLS Integration:** Strict private network connectivity utilizing Azure Monitor Private Link Scope.
+* ✅ **OS-Level Monitoring:** Comprehensive ingestion of Windows Event Logs, Syslog, and Performance Counters.
+* ✅ **Container Insights:** Deep observability into AKS pod logs, metrics, and cluster health.
+* ✅ **Azure Service Logs:** Native integration with Activity Logs, Diagnostic Settings, and Resource Logs.
 
-## 🏗️ Architecture
+### 🧠 AI & Machine Learning
+* 🤖 **Natural Language to KQL:** Convert plain English questions directly into executable KQL queries.
+* 🔍 **Root Cause Analysis:** AI-powered incident investigation and error summarization.
+* 📊 **Anomaly Detection:** Machine learning-based statistical anomaly detection for time-series metrics.
+* 🎯 **Pattern Recognition:** Automatically identify and cluster recurring log behaviors.
+* ⚠️ **Incident Prediction:** Predictive analytics forecasting potential system degradation or outages.
+
+### 🏢 Governance & Compliance
+* 🔐 **Zero-Trust Networking:** Full Private Link (AMPLS) support with no public ingress.
+* 📈 **Cost Optimization:** Built-in log ingestion cost analysis and data lifecycle management.
+* ✅ **Regulatory Compliance:** Pre-mapped reporting helpers for GDPR, PDPA, and MAS.
+* 🔄 **High Availability:** Multi-region and geo-redundant workspace architecture support.
+
+---
+
+## 🏗️ Architecture Topology
+
 ```text
 ┌──────────────────────────────────────────────────────┐
 │ Azure Monitor Ecosystem                              │
@@ -48,29 +58,33 @@ Enterprise-grade AI-powered log analytics solution for Azure infrastructure, foc
                     └───────────────┘
 ```
 
-## 🚀 Quick Start
+---
+
+## 🚀 Quick Start Guide
 
 ### Prerequisites
-- Azure Subscription
-- Terraform >= 1.6
-- Python >= 3.11
-- Docker (optional)
-- HuggingFace API Key
+Ensure your local development environment has the following tools installed:
+* Active Azure Subscription (Contributor/Owner rights)
+* Terraform `>= 1.6`
+* Python `>= 3.11`
+* Docker Desktop (optional, for containerized local dev)
+* HuggingFace API Key
 
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/yourusername/azure-log-analytics-ai.git
 cd azure-log-analytics-ai
-bash
 ```
 
 ### 2. Configure Environment
+Initialize your local environment variables.
 ```bash
 cp .env.example .env
-# Edit .env with your credentials
+# Edit the .env file with your specific Azure and HuggingFace credentials
 ```
 
 ### 3. Deploy Infrastructure
+Provision the Azure resources using the provided Terraform modules.
 ```bash
 cd terraform/environments/dev
 terraform init
@@ -79,18 +93,21 @@ terraform apply
 ```
 
 ### 4. Run API Locally
+Install the Python dependencies and launch the backend service.
 ```bash
 poetry install
 poetry run uvicorn src.api.main:app --reload
 ```
 
-### 5. Access API
-```bash
-http://localhost:8000/docs
-```
-## 📖 API Examples
+### 5. Access API Documentation
+Once the server is running, access the interactive Swagger UI:
+👉 `http://localhost:8000/docs`
 
-### Natural Language Query
+---
+
+## 📖 API Usage Examples
+
+### Natural Language Query Translation
 ```bash
 curl -X POST http://localhost:8000/api/v1/logs/query/natural \
   -H "Content-Type: application/json" \
@@ -100,56 +117,55 @@ curl -X POST http://localhost:8000/api/v1/logs/query/natural \
   }'
 ```
 
-### Root Cause Analysis
+### AI Root Cause Analysis
 ```bash
 curl -X POST http://localhost:8000/api/v1/analytics/root-cause \
   -H "Content-Type: application/json" \
   -d '{
     "workspace_id": "your-workspace-id",
-    "error_logs": ["Error connecting to database", "Timeout after 30s"],
-    "context": {"service": "payment-api", "environment": "production"}
+    "error_logs": [
+      "Error connecting to database", 
+      "Timeout after 30s"
+    ],
+    "context": {
+      "service": "payment-api", 
+      "environment": "production"
+    }
   }'
 ```
 
-## 💰 Cost Estimate
+---
 
-### Development
-    - Log Analytics: ~$5/month (5GB/day)
-    - Container Apps: FREE tier
-    - Storage: ~$2/month
-    - Total: ~$7/month
+## 💰 Cloud Cost Estimates
 
-### Production
-    - Log Analytics: ~$50/month (100GB/day with commitment)
-    - Container Apps: ~$20/month
-    - Storage: ~$10/month
-    - Azure: ~$150/month (3 nodes)
-    - Total: ~$230/month
+> **Note:** These estimates are baseline projections. Actual costs will vary based on your exact log ingestion volume (GB/day) and retention settings.
 
-## 📚 Documentation
-    - Architecture Guide
-    - KQL Query Reference
-    - AMPLS Setup
-    - API Reference
-    - Compliance Mapping
+| Environment | Log Analytics | Container Apps | Storage | AKS/Compute | **Estimated Total** |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Development** | ~$5/mo *(5GB/day)* | FREE Tier | ~$2/mo | N/A | **~$7 / month** |
+| **Production** | ~$50/mo *(100GB/day)* | ~$20/mo | ~$10/mo | ~$150/mo *(3 nodes)* | **~$230 / month** |
+
+*\*Production Log Analytics estimate assumes utilization of the 100GB/day Capacity Reservation tier.*
+
+---
+
+## 📚 Project Documentation
+
+Detailed guides and references can be found in the `/docs` directory:
+* [Architecture Guide](./docs/ARCHITECTURE.md)
+* [API Reference](./docs/API_REFERENCE.md)
+* [Infrastructure Setup (AMPLS)](./docs/SETUP.md)
+* [KQL Query Templates](./docs/KQL_REFERENCE.md)
+* [Compliance Mapping](./docs/COMPLIANCE.md)
+
+---
 
 ## 🤝 Contributing
-Contributions welcome! Please see CONTRIBUTING.md.
+
+We welcome contributions from the community! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, development process, and pull request guidelines.
+
+---
 
 ## 📄 License
-MIT License - see LICENSE file.
-```bash 
 
-This completes the comprehensive enterprise-grade Azure Log Analytics AI solution! The implementation includes:
-
-✅ Full Azure Monitor integration
-✅ AMPLS (Private Link) support
-✅ OS-level and container log monitoring
-✅ AI-powered analytics with LangChain + HuggingFace
-✅ Complete Terraform infrastructure
-✅ FastAPI backend
-✅ Docker deployment
-✅ Production-ready code
-
-Would you like me to continue with additional components like the GitHub Actions CI/CD pipeline, Grafana dashboards, or compliance reporting modules?
-```
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
