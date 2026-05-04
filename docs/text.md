@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Enterprise Setup & Deployment Guide: AI-Powered Azure Log Analytics
 
 > **Project Info:** This document outlines the standard operating procedures (SOP) for setting up, deploying, and maintaining the AI-powered Azure Log Analytics infrastructure and backend services.
@@ -337,8 +336,6 @@ az consumption usage list \
 - [x] Prometheus metrics
 - [x] Grafana dashboards
 - [x] Alert rules
-```
-```
 
 ### 🎉 Congratulations! 
 You now have a complete, enterprise-grade AI-powered Azure Log Analytics solution ready for deployment!
