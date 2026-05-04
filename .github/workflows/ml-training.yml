@@ -1,9 +1,10 @@
 name: ML Model Training
 
 on:
-  schedule:
-    - cron: '0 2 * * 0'  # Weekly on Sunday at 2 AM
-  workflow_dispatch:
+  workflow_dispatch: # This enables the "Run workflow" button for manual execution
+#  schedule:
+#    - cron: '0 2 * * 0'  # Weekly on Sunday at 2 AM
+#  workflow_dispatch:
 
 jobs:
   train-models:

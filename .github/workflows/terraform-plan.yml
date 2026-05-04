@@ -1,13 +1,14 @@
 name: Terraform Plan
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'terraform/**'
-      - '.github/workflows/terraform-plan.yml'
+  workflow_dispatch: # This enables the "Run workflow" button for manual execution
+#  pull_request:
+#    branches:
+#      - main
+#      - develop
+#    paths:
+#      - 'terraform/**'
+#      - '.github/workflows/terraform-plan.yml'
 
 env:
   TF_VERSION: '1.6.0'
