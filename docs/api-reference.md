@@ -199,3 +199,26 @@ GET /api/v1/compliance/summary?workspace_id=<id>&days=30
 | 429  | Too Many Requests - Rate limit exceeded |
 | 500  | Internal Server Error                   |
 | 503  | Service Unavailable                     |
+
+### Rate Limits
+   - Free Tier: 100 requests/hour
+   - Standard Tier: 1000 requests/hour
+   - Enterprise Tier: Unlimited
+
+### Pagination
+For large result sets:
+```bash
+GET /api/v1/logs/query?workspace_id=<id>&limit=100&offset=0
+```
+### Webhooks (Coming Soon)
+Register webhooks for real-time alerts:
+```bash
+POST /api/v1/webhooks
+Content-Type: application/json
+
+{
+  "url": "https://your-service.com/webhook",
+  "events": ["anomaly_detected", "incident_predicted"],
+  "secret": "your_webhook_secret"
+}
+```
