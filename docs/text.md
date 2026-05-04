@@ -1,5 +1,3 @@
-***
-
 ```markdown
 # 🚀 Enterprise Setup & Deployment Guide: AI-Powered Azure Log Analytics
 
@@ -360,5 +358,3 @@ You now have a complete, enterprise-grade AI-powered Azure Log Analytics solutio
 3. Advanced ML models configuration?
 4. Azure Policy definitions?
 5. Cost optimization scripts?
-
-***
