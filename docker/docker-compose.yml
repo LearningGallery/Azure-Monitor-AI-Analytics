@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/services/api.Dockerfile
+    container_name: ai-log-api
+    ports:
+      - "8000:8000"
+    environment:
+      - AZURE_SUBSCRIPTION_ID=\${AZURE_SUBSCRIPTION_ID}
+      - AZURE_TENANT_ID=\${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=\${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=\${AZURE_CLIENT_SECRET}
+      - HUGGINGFACE_API_KEY=\${HUGGINGFACE_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - ../.env
+    depends_on:
+      - redis
+    networks:
+      - ai-log-network
+    restart: unless-stopped
+  
+  redis:
+    image: redis:7-alpine
+    container_name: ai-log-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-log-network
+    restart: unless-stopped
+  
+  # Celery worker for async tasks
+  celery-worker:
+    build:
+      context: ..
+      dockerfile: docker/services/api.Dockerfile
+    container_name: ai-log-celery
+    command: celery -A src.tasks worker --loglevel=info
+    environment:
+      - AZURE_SUBSCRIPTION_ID=\${AZURE_SUBSCRIPTION_ID}
+      - AZURE_TENANT_ID=\${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=\${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=\${AZURE_CLIENT_SECRET}
+      - HUGGINGFACE_API_KEY=\${HUGGINGFACE_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - ../.env
+    depends_on:
+      - redis
+    networks:
+      - ai-log-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  ai-log-network:
+    driver: bridge

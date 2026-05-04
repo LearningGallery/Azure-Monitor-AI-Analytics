@@ -1,0 +1,8 @@
+// High CPU VMs in the last hour
+Perf
+| where TimeGenerated > ago(1h)
+| where ObjectName == "Processor" and CounterName == "% Processor Time"
+| where InstanceName == "_Total"
+| summarize AvgCPU = avg(CounterValue), MaxCPU = max(CounterValue) by Computer
+| where AvgCPU > 80
+| order by AvgCPU desc

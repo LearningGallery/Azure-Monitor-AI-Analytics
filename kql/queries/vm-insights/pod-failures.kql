@@ -1,0 +1,10 @@
+// Kubernetes Pod Failures
+KubePodInventory
+| where TimeGenerated > ago(24h)
+| where PodStatus in ("Failed", "Unknown", "Pending")
+| summarize 
+    FailureCount = count(),
+    LastSeen = max(TimeGenerated),
+    Namespaces = make_set(Namespace)
+    by PodName, PodStatus, ControllerName
+| order by FailureCount desc
