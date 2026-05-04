@@ -188,10 +188,9 @@ GET /api/v1/compliance/summary?workspace_id=<id>&days=30
 }
 ```
 ### Error Codes
-```Table
 
 | Code | Description                             |
-| ---- | --------------------------------------- |
+| :--- | :-------------------------------------- |
 | 200  | Success                                 |
 | 400  | Bad Request - Invalid parameters        |
 | 401  | Unauthorized - Invalid/missing token    |
@@ -200,4 +199,3 @@ GET /api/v1/compliance/summary?workspace_id=<id>&days=30
 | 429  | Too Many Requests - Rate limit exceeded |
 | 500  | Internal Server Error                   |
 | 503  | Service Unavailable                     |
-```
