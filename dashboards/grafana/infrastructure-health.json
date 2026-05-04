@@ -1,0 +1,119 @@
+{
+  "dashboard": {
+    "title": "Azure Infrastructure Health",
+    "tags": ["azure", "infrastructure", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "Error Rate (Last 24h)",
+        "type": "graph",
+        "datasource": "Azure Monitor",
+        "targets": [
+          {
+            "azureMonitor": {
+              "resourceGroup": "\$resource_group",
+              "workspace": "\$workspace",
+              "query": "union withsource=TableName * | where TimeGenerated > ago(24h) | where Level == 'Error' | summarize ErrorCount = count() by bin(TimeGenerated, 5m) | order by TimeGenerated asc"
+            }
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Top Error Messages",
+        "type": "table",
+        "datasource": "Azure Monitor",
+        "targets": [
+          {
+            "azureMonitor": {
+              "resourceGroup": "\$resource_group",
+              "workspace": "\$workspace",
+              "query": "union withsource=TableName * | where TimeGenerated > ago(24h) | where Level == 'Error' | summarize Count = count() by Message = coalesce(Message, RenderedDescription) | top 10 by Count desc"
+            }
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "VM CPU Usage",
+        "type": "graph",
+        "datasource": "Azure Monitor",
+        "targets": [
+          {
+            "azureMonitor": {
+              "resourceGroup": "\$resource_group",
+              "workspace": "\$workspace",
+              "query": "Perf | where TimeGenerated > ago(1h) | where ObjectName == 'Processor' and CounterName == '% Processor Time' | summarize AvgCPU = avg(CounterValue) by Computer, bin(TimeGenerated, 1m) | order by TimeGenerated asc"
+            }
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Kubernetes Pod Status",
+        "type": "stat",
+        "datasource": "Azure Monitor",
+        "targets": [
+          {
+            "azureMonitor": {
+              "resourceGroup": "\$resource_group",
+              "workspace": "\$workspace",
+              "query": "KubePodInventory | where TimeGenerated > ago(5m) | summarize RunningPods = countif(PodStatus == 'Running'), FailedPods = countif(PodStatus == 'Failed'), PendingPods = countif(PodStatus == 'Pending')"
+            }
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "resource_group",
+          "type": "query",
+          "datasource": "Azure Monitor",
+          "query": "ResourceGroups()",
+          "current": {
+            "text": "ailoganalytics-prod-rg",
+            "value": "ailoganalytics-prod-rg"
+          }
+        },
+        {
+          "name": "workspace",
+          "type": "query",
+          "datasource": "Azure Monitor",
+          "query": "Workspaces(\$resource_group)",
+          "current": {
+            "text": "ailoganalytics-prod-law-primary",
+            "value": "ailoganalytics-prod-law-primary"
+          }
+        }
+      ]
+    }
+  }
+}
