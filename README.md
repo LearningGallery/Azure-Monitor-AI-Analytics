@@ -152,8 +152,8 @@ curl -X POST http://localhost:8000/api/v1/analytics/root-cause \
 ## 📚 Project Documentation
 
 Detailed guides and references can be found in the `/docs` directory:
-* [Architecture Guide](./docs/ARCHITECTURE.md)
-* [API Reference](./docs/API_REFERENCE.md)
+* [Architecture Guide](./docs/architecture.md)
+* [API Reference](./docs/api-reference.md)
 * [Infrastructure Setup (AMPLS)](./docs/SETUP.md)
 * [KQL Query Templates](./docs/KQL_REFERENCE.md)
 * [Compliance Mapping](./docs/COMPLIANCE.md)
