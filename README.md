@@ -35,6 +35,26 @@
 
 ## 🏗️ Architecture Topology
 
+```mermaid
+flowchart TD
+    subgraph MonitorEcosystem ["Azure Monitor Ecosystem"]
+        direction TB
+        LAW["Log Analytics Workspaces"]
+        CI["Container Insights"]
+        Sentinel["Sentinel (Optional)"]
+        
+        AMPLS{"AMPLS (Private Link)"}
+        
+        LAW --> AMPLS
+        CI --> AMPLS
+        Sentinel --> AMPLS
+    end
+
+    App["FastAPI + LangChain + HuggingFace"]
+    
+    AMPLS --> App
+```
+
 ```text
 ┌──────────────────────────────────────────────────────┐
 │ Azure Monitor Ecosystem                              │
