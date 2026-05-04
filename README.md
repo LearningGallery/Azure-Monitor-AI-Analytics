@@ -25,8 +25,28 @@ Enterprise-grade AI-powered log analytics solution for Azure infrastructure, foc
 - 🔄 **Multi-Region**: Geo-redundant workspace support
 
 ## 🏗️ Architecture
-┌──────────────────────────────────────────────────────┐ │ Azure Monitor Ecosystem │ │ ┌─────────────┐ ┌──────────────┐ ┌─────────────┐ │ │ │ Log Analytics│ │ Container │ │ Sentinel │ │ │ │ Workspaces │ │ Insights │ │ (Optional) │ │ │ └──────┬───────┘ └──────┬───────┘ └──────┬──────┘ │ │ │ │ │ │ │ └──────────────────┴──────────────────┘ │ │ │ │ │ ┌────────▼────────┐ │ │ │ AMPLS │ │ │ │ (Private Link) │ │ │ └────────┬────────┘ │ └────────────────────────────┼──────────────────────────┘ │ ┌────────▼────────┐ │ FastAPI + │ │ LangChain │ └──────────────────┘
-
+```text
+┌──────────────────────────────────────────────────────┐
+│ Azure Monitor Ecosystem                              │
+│  ┌─────────────┐   ┌──────────────┐   ┌─────────────┐│
+│  │ Log Analytics│  │ Container    │   │ Sentinel    ││
+│  │ Workspaces   │  │ Insights     │   │ (Optional)  ││
+│  └──────┬───────┘  └──────┬───────┘   └──────┬──────┘│
+│         │                 │                  │       │
+│         └─────────────────┴──────────────────┘       │
+│                           │                          │
+│                   ┌───────▼───────┐                  │
+│                   │ AMPLS         │                  │
+│                   │ (Private Link)│                  │
+│                   └───────┬───────┘                  │
+└───────────────────────────┼──────────────────────────┘
+                            │
+                    ┌───────▼───────┐
+                    │ FastAPI +     │
+                    │ LangChain +   │
+                    │ HuggingFace   │
+                    └───────────────┘
+```
 
 ## 🚀 Quick Start
 
