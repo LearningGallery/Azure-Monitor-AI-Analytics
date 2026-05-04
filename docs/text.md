@@ -1,278 +1,171 @@
-# 🔌 API Reference Guide: AI-Powered Azure Log Analytics
+# 🤖 AI-Powered Azure Log Analytics
 
-> **Developer Info:** This document serves as the official API contract for interacting with the AI-Powered Azure Log Analytics backend. It details environments, authentication requirements, core endpoints, and system behaviors.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Terraform 1.6+](https://img.shields.io/badge/terraform-1.6+-purple.svg)](https://www.terraform.io/)
+[![Azure](https://img.shields.io/badge/azure-%230072C6.svg?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
+
+> **Overview:** An enterprise-grade, AI-powered log analytics solution for Azure infrastructure. This project enhances Azure Monitor, Log Analytics Workspaces, and AMPLS with machine learning capabilities to provide automated insights, natural language querying, and predictive incident analysis.
 
 ---
 
-## 🌍 Environments & Authentication
+## 🎯 Enterprise Features
 
-### Base URLs
-Direct your API requests to the appropriate environment endpoint:
+### ☁️ Core Cloud Capabilities
+* ✅ **Multi-Workspace Aggregation:** Seamlessly query across multiple Log Analytics workspaces.
+* ✅ **AMPLS Integration:** Strict private network connectivity utilizing Azure Monitor Private Link Scope.
+* ✅ **OS-Level Monitoring:** Comprehensive ingestion of Windows Event Logs, Syslog, and Performance Counters.
+* ✅ **Container Insights:** Deep observability into AKS pod logs, metrics, and cluster health.
+* ✅ **Azure Service Logs:** Native integration with Activity Logs, Diagnostic Settings, and Resource Logs.
 
-* **Production:** `https://your-app.azurecontainerapps.io`
-* **Development:** `http://localhost:8000`
+### 🧠 AI & Machine Learning
+* 🤖 **Natural Language to KQL:** Convert plain English questions directly into executable KQL queries.
+* 🔍 **Root Cause Analysis:** AI-powered incident investigation and error summarization.
+* 📊 **Anomaly Detection:** Machine learning-based statistical anomaly detection for time-series metrics.
+* 🎯 **Pattern Recognition:** Automatically identify and cluster recurring log behaviors.
+* ⚠️ **Incident Prediction:** Predictive analytics forecasting potential system degradation or outages.
 
-### Authentication
-All API endpoints (except health checks) require a valid Azure AD bearer token. Pass this token in the `Authorization` header of your HTTP request.
-```http
-Authorization: Bearer <azure_ad_token>
+### 🏢 Governance & Compliance
+* 🔐 **Zero-Trust Networking:** Full Private Link (AMPLS) support with no public ingress.
+* 📈 **Cost Optimization:** Built-in log ingestion cost analysis and data lifecycle management.
+* ✅ **Regulatory Compliance:** Pre-mapped reporting helpers for GDPR, PDPA, and MAS.
+* 🔄 **High Availability:** Multi-region and geo-redundant workspace architecture support.
+
+---
+
+## 🏗️ Architecture Topology
+
+```text
+┌──────────────────────────────────────────────────────┐
+│ Azure Monitor Ecosystem                              │
+│  ┌─────────────┐   ┌──────────────┐   ┌─────────────┐│
+│  │ Log Analytics│  │ Container    │   │ Sentinel    ││
+│  │ Workspaces   │  │ Insights     │   │ (Optional)  ││
+│  └──────┬───────┘  └──────┬───────┘   └──────┬──────┘│
+│         │                 │                  │       │
+│         └─────────────────┴──────────────────┘       │
+│                           │                          │
+│                   ┌───────▼───────┐                  │
+│                   │ AMPLS         │                  │
+│                   │ (Private Link)│                  │
+│                   └───────┬───────┘                  │
+└───────────────────────────┼──────────────────────────┘
+                            │
+                    ┌───────▼───────┐
+                    │ FastAPI +     │
+                    │ LangChain +   │
+                    │ HuggingFace   │
+                    └───────────────┘
 ```
 
 ---
 
-## 📊 Core Endpoints: Log Queries
+## 🚀 Quick Start Guide
 
-### 1. Execute KQL Query
-Executes a raw Kusto Query Language (KQL) string directly against the specified Log Analytics workspace.
+### Prerequisites
+Ensure your local development environment has the following tools installed:
+* Active Azure Subscription (Contributor/Owner rights)
+* Terraform `>= 1.6`
+* Python `>= 3.11`
+* Docker Desktop (optional, for containerized local dev)
+* HuggingFace API Key
 
-**Endpoint:** `POST /api/v1/logs/query`  
-**Content-Type:** `application/json`
-
-#### Request Payload
-```json
-{
-  "workspace_id": "12345678-1234-1234-1234-123456789012",
-  "query": "Heartbeat | summarize count() by Computer",
-  "timespan_hours": 24,
-  "include_statistics": false
-}
+### 1. Clone Repository
+```bash
+git clone https://github.com/yourusername/azure-log-analytics-ai.git
+cd azure-log-analytics-ai
 ```
 
-#### Response
-```json
-{
-  "status": "success",
-  "row_count": 10,
-  "results": [
-    {
-      "Computer": "server1",
-      "count_": 144
+### 2. Configure Environment
+Initialize your local environment variables.
+```bash
+cp .env.example .env
+# Edit the .env file with your specific Azure and HuggingFace credentials
+```
+
+### 3. Deploy Infrastructure
+Provision the Azure resources using the provided Terraform modules.
+```bash
+cd terraform/environments/dev
+terraform init
+terraform plan
+terraform apply
+```
+
+### 4. Run API Locally
+Install the Python dependencies and launch the backend service.
+```bash
+poetry install
+poetry run uvicorn src.api.main:app --reload
+```
+
+### 5. Access API Documentation
+Once the server is running, access the interactive Swagger UI:
+👉 `http://localhost:8000/docs`
+
+---
+
+## 📖 API Usage Examples
+
+### Natural Language Query Translation
+```bash
+curl -X POST http://localhost:8000/api/v1/logs/query/natural \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspace_id": "your-workspace-id",
+    "natural_query": "Show me failed logins in the last hour"
+  }'
+```
+
+### AI Root Cause Analysis
+```bash
+curl -X POST http://localhost:8000/api/v1/analytics/root-cause \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspace_id": "your-workspace-id",
+    "error_logs": [
+      "Error connecting to database", 
+      "Timeout after 30s"
+    ],
+    "context": {
+      "service": "payment-api", 
+      "environment": "production"
     }
-  ],
-  "statistics": null
-}
-```
-
-### 2. Natural Language Query
-Leverages the LangChain AI engine to translate natural language into an executable KQL query, runs it, and returns the results.
-
-**Endpoint:** `POST /api/v1/logs/query/natural`  
-**Content-Type:** `application/json`
-
-#### Request Payload
-```json
-{
-  "workspace_id": "12345678-1234-1234-1234-123456789012",
-  "natural_query": "Show me failed logins in the last hour",
-  "timespan_hours": 1
-}
-```
-
-#### Response
-```json
-{
-  "natural_query": "Show me failed logins in the last hour",
-  "generated_kql": "SecurityEvent\n| where TimeGenerated > ago(1h)\n| where EventID == 4625...",
-  "is_valid": true,
-  "warnings": [],
-  "results": {
-    "status": "success",
-    "row_count": 5,
-    "results": [...]
-  }
-}
+  }'
 ```
 
 ---
 
-## 🧠 Core Endpoints: AI Analytics
+## 💰 Cloud Cost Estimates
 
-### 1. Root Cause Analysis
-Analyzes an array of error logs and system context to determine the most likely root cause of a system failure.
+> **Note:** These estimates are baseline projections. Actual costs will vary based on your exact log ingestion volume (GB/day) and retention settings.
 
-**Endpoint:** `POST /api/v1/analytics/root-cause`  
-**Content-Type:** `application/json`
+| Environment | Log Analytics | Container Apps | Storage | AKS/Compute | **Estimated Total** |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Development** | ~$5/mo *(5GB/day)* | FREE Tier | ~$2/mo | N/A | **~$7 / month** |
+| **Production** | ~$50/mo *(100GB/day)* | ~$20/mo | ~$10/mo | ~$150/mo *(3 nodes)* | **~$230 / month** |
 
-#### Request Payload
-```json
-{
-  "workspace_id": "12345678-1234-1234-1234-123456789012",
-  "error_logs": [
-    "Database connection timeout",
-    "Failed to connect to SQL server"
-  ],
-  "context": {
-    "service": "payment-api",
-    "environment": "production",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-#### Response
-```json
-{
-  "status": "success",
-  "analysis": "## Root Cause Analysis\n\n**Root Cause**: Database connection pool exhaustion...",
-  "logs_analyzed": 2,
-  "context": {
-    "service": "payment-api",
-    "environment": "production",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-### 2. Anomaly Detection
-Applies statistical and machine learning models to detect anomalies within a specified metric over time.
-
-**Endpoint:** `POST /api/v1/analytics/anomaly-detection`  
-**Content-Type:** `application/json`
-
-#### Request Payload
-```json
-{
-  "workspace_id": "12345678-1234-1234-1234-123456789012",
-  "metric_name": "% Processor Time",
-  "timespan_hours": 24,
-  "table_name": "Perf"
-}
-```
-
-#### Response
-```json
-{
-  "status": "success",
-  "metric": "% Processor Time",
-  "anomalies_count": 3,
-  "anomalies": [
-    {
-      "timestamp": "2024-01-15T14:30:00Z",
-      "value": 95.5,
-      "z_score": 3.2,
-      "deviation_percent": 45.2,
-      "computer": "server1"
-    }
-  ],
-  "statistics": {
-    "mean": 65.8,
-    "std": 12.3,
-    "min": 45.0,
-    "max": 95.5,
-    "data_points": 1440
-  },
-  "explanation": "The CPU usage spike indicates..."
-}
-```
+*\*Production Log Analytics estimate assumes utilization of the 100GB/day Capacity Reservation tier.*
 
 ---
 
-## 🛡️ Core Endpoints: Compliance
+## 📚 Project Documentation
 
-### 1. GDPR Compliance Check
-Generates a specific compliance report evaluating data retention and GDPR-related policies for a given workspace.
-
-**Endpoint:** `GET /api/v1/compliance/gdpr`
-
-#### Query Parameters
-* `workspace_id` (string, required)
-* `days` (integer, optional)
-
-#### Response
-```json
-{
-  "report_type": "GDPR",
-  "time_range": "Last 30 days",
-  "findings": [
-    {
-      "severity": "HIGH",
-      "category": "Data Retention",
-      "finding": "Data retained for 400 days (GDPR recommends ≤365)",
-      "recommendation": "Review retention policies"
-    }
-  ],
-  "compliance_score": 85.0,
-  "generated_at": "2024-01-15T10:00:00Z"
-}
-```
-
-### 2. Compliance Summary
-Retrieves a holistic compliance score spanning multiple regulatory frameworks (GDPR, PDPA, MAS TRM).
-
-**Endpoint:** `GET /api/v1/compliance/summary`
-
-#### Query Parameters
-* `workspace_id` (string, required)
-* `days` (integer, optional)
-
-#### Response
-```json
-{
-  "workspace_id": "12345678-1234-1234-1234-123456789012",
-  "report_period": "Last 30 days",
-  "generated_at": "2024-01-15T10:00:00Z",
-  "compliance_frameworks": {
-    "GDPR": {
-      "score": 85.0,
-      "findings_count": 4,
-      "critical_findings": 1
-    },
-    "PDPA": {
-      "score": 90.0,
-      "findings_count": 3,
-      "critical_findings": 0
-    },
-    "MAS_TRM": {
-      "score": 88.0,
-      "findings_count": 5,
-      "critical_findings": 1
-    }
-  },
-  "overall_score": 87.67,
-  "recommendations": [...]
-}
-```
+Detailed guides and references can be found in the `/docs` directory:
+* [Architecture Guide](./docs/ARCHITECTURE.md)
+* [API Reference](./docs/API_REFERENCE.md)
+* [Infrastructure Setup (AMPLS)](./docs/SETUP.md)
+* [KQL Query Templates](./docs/KQL_REFERENCE.md)
+* [Compliance Mapping](./docs/COMPLIANCE.md)
 
 ---
 
-## ⚙️ System Specifications
+## 🤝 Contributing
 
-### Error Codes
-Standard HTTP status codes are returned to indicate the success or failure of an API request.
+We welcome contributions from the community! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, development process, and pull request guidelines.
 
-| Code | Status | Description |
-| :--- | :--- | :--- |
-| **200** | `OK` | Success |
-| **400** | `Bad Request` | Invalid parameters or malformed payload |
-| **401** | `Unauthorized` | Invalid, expired, or missing Bearer token |
-| **403** | `Forbidden` | Valid token, but insufficient permissions |
-| **404** | `Not Found` | Requested resource/workspace doesn't exist |
-| **429** | `Too Many Requests` | Rate limit exceeded |
-| **500** | `Internal Server Error` | Backend system or integration failure |
-| **503** | `Service Unavailable` | Azure Monitor or LangChain temporarily unavailable |
+---
 
-### Rate Limits
-API quotas are enforced per tenant based on your subscription tier:
-* **Free Tier:** 100 requests / hour
-* **Standard Tier:** 1,000 requests / hour
-* **Enterprise Tier:** Unlimited
+## 📄 License
 
-### Pagination
-For endpoints returning large datasets, append standard pagination parameters to your GET request:
-```http
-GET /api/v1/logs/query?workspace_id=<id>&limit=100&offset=0
-```
-
-### Webhooks (🚀 Coming Soon)
-Register webhooks to receive real-time, push-based alerts for AI insights and system anomalies.
-
-**Endpoint:** `POST /api/v1/webhooks`  
-**Content-Type:** `application/json`
-
-#### Request Payload
-```json
-{
-  "url": "[https://your-service.com/webhook](https://your-service.com/webhook)",
-  "events": ["anomaly_detected", "incident_predicted"],
-  "secret": "your_webhook_secret"
-}
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.

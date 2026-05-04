@@ -1,22 +1,35 @@
-# API Reference
+# 🔌 API Reference Guide: AI-Powered Azure Log Analytics
 
-## Base URL
-Production: https://your-app.azurecontainerapps.io Development: http://localhost:8000
+> **Developer Info:** This document serves as the official API contract for interacting with the AI-Powered Azure Log Analytics backend. It details environments, authentication requirements, core endpoints, and system behaviors.
 
-## Authentication
+---
+
+## 🌍 Environments & Authentication
+
+### Base URLs
+Direct your API requests to the appropriate environment endpoint:
+
+* **Production:** `https://your-app.azurecontainerapps.io`
+* **Development:** `http://localhost:8000`
+
+### Authentication
+All API endpoints (except health checks) require a valid Azure AD bearer token. Pass this token in the `Authorization` header of your HTTP request.
 ```http
 Authorization: Bearer <azure_ad_token>
 ```
 
-## Endpoints
+---
 
-### Log Queries
+## 📊 Core Endpoints: Log Queries
 
-#### Execute KQL Query
-```bash 
-POST /api/v1/logs/query
-Content-Type: application/json
+### 1. Execute KQL Query
+Executes a raw Kusto Query Language (KQL) string directly against the specified Log Analytics workspace.
 
+**Endpoint:** `POST /api/v1/logs/query`  
+**Content-Type:** `application/json`
+
+#### Request Payload
+```json
 {
   "workspace_id": "12345678-1234-1234-1234-123456789012",
   "query": "Heartbeat | summarize count() by Computer",
@@ -24,8 +37,9 @@ Content-Type: application/json
   "include_statistics": false
 }
 ```
-#### Response:
-```bash 
+
+#### Response
+```json
 {
   "status": "success",
   "row_count": 10,
@@ -38,19 +52,24 @@ Content-Type: application/json
   "statistics": null
 }
 ```
-#### Natural Language Query
-```bash 
-POST /api/v1/logs/query/natural
-Content-Type: application/json
 
+### 2. Natural Language Query
+Leverages the LangChain AI engine to translate natural language into an executable KQL query, runs it, and returns the results.
+
+**Endpoint:** `POST /api/v1/logs/query/natural`  
+**Content-Type:** `application/json`
+
+#### Request Payload
+```json
 {
   "workspace_id": "12345678-1234-1234-1234-123456789012",
   "natural_query": "Show me failed logins in the last hour",
   "timespan_hours": 1
 }
 ```
-#### Response:
-```bash 
+
+#### Response
+```json
 {
   "natural_query": "Show me failed logins in the last hour",
   "generated_kql": "SecurityEvent\n| where TimeGenerated > ago(1h)\n| where EventID == 4625...",
@@ -63,13 +82,19 @@ Content-Type: application/json
   }
 }
 ```
-### Analytics
 
-#### Root Cause Analysis
-```bash 
-POST /api/v1/analytics/root-cause
-Content-Type: application/json
+---
 
+## 🧠 Core Endpoints: AI Analytics
+
+### 1. Root Cause Analysis
+Analyzes an array of error logs and system context to determine the most likely root cause of a system failure.
+
+**Endpoint:** `POST /api/v1/analytics/root-cause`  
+**Content-Type:** `application/json`
+
+#### Request Payload
+```json
 {
   "workspace_id": "12345678-1234-1234-1234-123456789012",
   "error_logs": [
@@ -83,20 +108,29 @@ Content-Type: application/json
   }
 }
 ```
-#### Response:
-```bash
+
+#### Response
+```json
 {
   "status": "success",
   "analysis": "## Root Cause Analysis\n\n**Root Cause**: Database connection pool exhaustion...",
   "logs_analyzed": 2,
-  "context": {...}
+  "context": {
+    "service": "payment-api",
+    "environment": "production",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
-#### Anomaly Detection
-```bash
-POST /api/v1/analytics/anomaly-detection
-Content-Type: application/json
 
+### 2. Anomaly Detection
+Applies statistical and machine learning models to detect anomalies within a specified metric over time.
+
+**Endpoint:** `POST /api/v1/analytics/anomaly-detection`  
+**Content-Type:** `application/json`
+
+#### Request Payload
+```json
 {
   "workspace_id": "12345678-1234-1234-1234-123456789012",
   "metric_name": "% Processor Time",
@@ -104,8 +138,9 @@ Content-Type: application/json
   "table_name": "Perf"
 }
 ```
-#### Response:
-```bash
+
+#### Response
+```json
 {
   "status": "success",
   "metric": "% Processor Time",
@@ -130,15 +165,21 @@ Content-Type: application/json
 }
 ```
 
-### Compliance
+---
 
-#### GDPR Compliance Check
-```bash
-GET /api/v1/compliance/gdpr?workspace_id=<id>&days=30
-```
+## 🛡️ Core Endpoints: Compliance
+
+### 1. GDPR Compliance Check
+Generates a specific compliance report evaluating data retention and GDPR-related policies for a given workspace.
+
+**Endpoint:** `GET /api/v1/compliance/gdpr`
+
+#### Query Parameters
+* `workspace_id` (string, required)
+* `days` (integer, optional)
 
 #### Response
-```bash
+```json
 {
   "report_type": "GDPR",
   "time_range": "Last 30 days",
@@ -155,13 +196,17 @@ GET /api/v1/compliance/gdpr?workspace_id=<id>&days=30
 }
 ```
 
-#### Compliance Summary
-```bash
-GET /api/v1/compliance/summary?workspace_id=<id>&days=30
-```
+### 2. Compliance Summary
+Retrieves a holistic compliance score spanning multiple regulatory frameworks (GDPR, PDPA, MAS TRM).
 
-#### Response:
-```bash
+**Endpoint:** `GET /api/v1/compliance/summary`
+
+#### Query Parameters
+* `workspace_id` (string, required)
+* `days` (integer, optional)
+
+#### Response
+```json
 {
   "workspace_id": "12345678-1234-1234-1234-123456789012",
   "report_period": "Last 30 days",
@@ -187,38 +232,47 @@ GET /api/v1/compliance/summary?workspace_id=<id>&days=30
   "recommendations": [...]
 }
 ```
-### Error Codes
 
-| Code | Description                             |
-| :--- | :-------------------------------------- |
-| 200  | Success                                 |
-| 400  | Bad Request - Invalid parameters        |
-| 401  | Unauthorized - Invalid/missing token    |
-| 403  | Forbidden - Insufficient permissions    |
-| 404  | Not Found - Resource doesn't exist      |
-| 429  | Too Many Requests - Rate limit exceeded |
-| 500  | Internal Server Error                   |
-| 503  | Service Unavailable                     |
+---
+
+## ⚙️ System Specifications
+
+### Error Codes
+Standard HTTP status codes are returned to indicate the success or failure of an API request.
+
+| Code | Status | Description |
+| :--- | :--- | :--- |
+| **200** | `OK` | Success |
+| **400** | `Bad Request` | Invalid parameters or malformed payload |
+| **401** | `Unauthorized` | Invalid, expired, or missing Bearer token |
+| **403** | `Forbidden` | Valid token, but insufficient permissions |
+| **404** | `Not Found` | Requested resource/workspace doesn't exist |
+| **429** | `Too Many Requests` | Rate limit exceeded |
+| **500** | `Internal Server Error` | Backend system or integration failure |
+| **503** | `Service Unavailable` | Azure Monitor or LangChain temporarily unavailable |
 
 ### Rate Limits
-   - Free Tier: 100 requests/hour
-   - Standard Tier: 1000 requests/hour
-   - Enterprise Tier: Unlimited
+API quotas are enforced per tenant based on your subscription tier:
+* **Free Tier:** 100 requests / hour
+* **Standard Tier:** 1,000 requests / hour
+* **Enterprise Tier:** Unlimited
 
 ### Pagination
-For large result sets:
-```bash
+For endpoints returning large datasets, append standard pagination parameters to your GET request:
+```http
 GET /api/v1/logs/query?workspace_id=<id>&limit=100&offset=0
 ```
-### Webhooks (Coming Soon)
-Register webhooks for real-time alerts:
-```bash
-POST /api/v1/webhooks
-Content-Type: application/json
 
+### Webhooks (🚀 Coming Soon)
+Register webhooks to receive real-time, push-based alerts for AI insights and system anomalies.
+
+**Endpoint:** `POST /api/v1/webhooks`  
+**Content-Type:** `application/json`
+
+#### Request Payload
+```json
 {
-  "url": "https://your-service.com/webhook",
+  "url": "[https://your-service.com/webhook](https://your-service.com/webhook)",
   "events": ["anomaly_detected", "incident_predicted"],
   "secret": "your_webhook_secret"
 }
-```
