@@ -105,3 +105,31 @@ curl -X POST http://localhost:8000/api/v1/analytics/root-cause \
     - Storage: ~$10/month
     - Azure: ~$150/month (3 nodes)
     - Total: ~$230/month
+
+## 📚 Documentation
+    - Architecture Guide
+    - KQL Query Reference
+    - AMPLS Setup
+    - API Reference
+    - Compliance Mapping
+
+## 🤝 Contributing
+Contributions welcome! Please see CONTRIBUTING.md.
+
+## 📄 License
+MIT License - see LICENSE file.
+```bash 
+
+This completes the comprehensive enterprise-grade Azure Log Analytics AI solution! The implementation includes:
+
+✅ Full Azure Monitor integration
+✅ AMPLS (Private Link) support
+✅ OS-level and container log monitoring
+✅ AI-powered analytics with LangChain + HuggingFace
+✅ Complete Terraform infrastructure
+✅ FastAPI backend
+✅ Docker deployment
+✅ Production-ready code
+
+Would you like me to continue with additional components like the GitHub Actions CI/CD pipeline, Grafana dashboards, or compliance reporting modules?
+```
