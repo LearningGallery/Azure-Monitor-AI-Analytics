@@ -1,0 +1,6 @@
+// Kubernetes Pod Failures in last 24 hours
+KubePodInventory
+| where TimeGenerated > ago(24h)
+| where PodStatus in ("Failed", "Unknown", "Pending")
+| summarize FailureCount = count(), LastSeen = max(TimeGenerated) by PodName, PodStatus, Namespace, ControllerName
+| order by FailureCount desc
