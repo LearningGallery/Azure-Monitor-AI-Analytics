@@ -45,7 +45,7 @@ variable "ingestion_access_mode" {
   description = "Ingestion access mode: Open or PrivateOnly"
   type        = string
   default     = "PrivateOnly"
-  
+
   validation {
     condition     = contains(["Open", "PrivateOnly"], var.ingestion_access_mode)
     error_message = "Access mode must be either 'Open' or 'PrivateOnly'"
@@ -56,7 +56,7 @@ variable "query_access_mode" {
   description = "Query access mode: Open or PrivateOnly"
   type        = string
   default     = "PrivateOnly"
-  
+
   validation {
     condition     = contains(["Open", "PrivateOnly"], var.query_access_mode)
     error_message = "Access mode must be either 'Open' or 'PrivateOnly'"

@@ -4,7 +4,7 @@
 resource "azurerm_private_dns_zone" "monitor" {
   name                = "privatelink.monitor.azure.com"
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -12,7 +12,7 @@ resource "azurerm_private_dns_zone" "monitor" {
 resource "azurerm_private_dns_zone" "oms" {
   name                = "privatelink.oms.opinsights.azure.com"
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -20,7 +20,7 @@ resource "azurerm_private_dns_zone" "oms" {
 resource "azurerm_private_dns_zone" "ods" {
   name                = "privatelink.ods.opinsights.azure.com"
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -28,7 +28,7 @@ resource "azurerm_private_dns_zone" "ods" {
 resource "azurerm_private_dns_zone" "agentsvc" {
   name                = "privatelink.agentsvc.azure-automation.net"
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -36,7 +36,7 @@ resource "azurerm_private_dns_zone" "agentsvc" {
 resource "azurerm_private_dns_zone" "blob" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
@@ -47,7 +47,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "monitor" {
   private_dns_zone_name = azurerm_private_dns_zone.monitor.name
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
-  
+
   tags = var.tags
 }
 
@@ -57,7 +57,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "oms" {
   private_dns_zone_name = azurerm_private_dns_zone.oms.name
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
-  
+
   tags = var.tags
 }
 
@@ -67,7 +67,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "ods" {
   private_dns_zone_name = azurerm_private_dns_zone.ods.name
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
-  
+
   tags = var.tags
 }
 
@@ -77,7 +77,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "agentsvc" {
   private_dns_zone_name = azurerm_private_dns_zone.agentsvc.name
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
-  
+
   tags = var.tags
 }
 
@@ -87,7 +87,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "blob" {
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = var.vnet_id
   registration_enabled  = false
-  
+
   tags = var.tags
 }
 

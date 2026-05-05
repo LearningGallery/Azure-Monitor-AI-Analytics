@@ -4,7 +4,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = var.dns_prefix
-  
+
   default_node_pool {
     name                = var.default_node_pool.name
     vm_size             = var.default_node_pool.vm_size
@@ -15,33 +15,33 @@ resource "azurerm_kubernetes_cluster" "main" {
     os_disk_size_gb     = var.default_node_pool.os_disk_size_gb
     type                = var.default_node_pool.type
   }
-  
+
   identity {
     type = var.identity_type
   }
-  
+
   network_profile {
     network_plugin = var.network_plugin
     network_policy = var.network_policy
     service_cidr   = var.service_cidr
     dns_service_ip = var.dns_service_ip
   }
-  
+
   oms_agent {
     log_analytics_workspace_id = var.log_analytics_workspace_id
   }
-  
+
   azure_policy_enabled = var.azure_policy_enabled
-  
+
   role_based_access_control_enabled = var.role_based_access_control_enabled
-  
+
   tags = var.tags
 }
 
 # DCR Association
 resource "azurerm_monitor_data_collection_rule_association" "aks" {
   count = var.data_collection_rule_id != null ? 1 : 0
-  
+
   name                    = "${var.cluster_name}-dcr-association"
   target_resource_id      = azurerm_kubernetes_cluster.main.id
   data_collection_rule_id = var.data_collection_rule_id

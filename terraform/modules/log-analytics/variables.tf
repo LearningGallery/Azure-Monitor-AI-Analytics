@@ -22,7 +22,7 @@ variable "sku" {
   description = "Workspace SKU"
   type        = string
   default     = "PerGB2018"
-  
+
   validation {
     condition     = contains(["Free", "PerGB2018", "PerNode", "Premium", "Standard", "Standalone", "Unlimited", "CapacityReservation"], var.sku)
     error_message = "SKU must be a valid Log Analytics SKU"
@@ -33,7 +33,7 @@ variable "retention_days" {
   description = "Log retention in days (30-730)"
   type        = number
   default     = 90
-  
+
   validation {
     condition     = var.retention_days >= 30 && var.retention_days <= 730
     error_message = "Retention must be between 30 and 730 days"
@@ -81,7 +81,7 @@ variable "solutions" {
     "ServiceMap",
     "AzureActivity",
     "ChangeTracking",
-    "SecurityInsights"  # Sentinel
+    "SecurityInsights" # Sentinel
   ]
 }
 

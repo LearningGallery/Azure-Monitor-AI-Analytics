@@ -7,7 +7,7 @@ variable "project_name" {
 variable "environment" {
   description = "Environment (dev/staging/prod)"
   type        = string
-  
+
   validation {
     condition     = contains(["dev", "staging", "prod"], var.environment)
     error_message = "Environment must be dev, staging, or prod"
@@ -17,13 +17,13 @@ variable "environment" {
 variable "location" {
   description = "Primary Azure region"
   type        = string
-  default     = "southeastasia"  # Singapore
+  default     = "southeastasia" # Singapore
 }
 
 variable "secondary_location" {
   description = "Secondary Azure region for geo-redundancy"
   type        = string
-  default     = "eastasia"  # Hong Kong
+  default     = "eastasia" # Hong Kong
 }
 
 variable "enable_geo_redundancy" {
@@ -42,7 +42,7 @@ variable "log_retention_days" {
   description = "Log retention in days"
   type        = number
   default     = 90
-  
+
   validation {
     condition     = var.log_retention_days >= 30 && var.log_retention_days <= 730
     error_message = "Retention must be between 30 and 730 days"
@@ -52,7 +52,7 @@ variable "log_retention_days" {
 variable "daily_quota_gb" {
   description = "Daily ingestion quota in GB (-1 for unlimited)"
   type        = number
-  default     = 10  # 10GB per day for cost control
+  default     = 10 # 10GB per day for cost control
 }
 
 variable "aks_vm_size" {

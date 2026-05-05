@@ -4,30 +4,30 @@ resource "azurerm_virtual_network" "main" {
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = var.address_space
-  
+
   tags = var.tags
 }
 
 # Subnets
 resource "azurerm_subnet" "subnets" {
   for_each = var.subnets
-  
+
   name                 = each.value.name
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = each.value.address_prefixes
-  
+
   service_endpoints = lookup(each.value, "service_endpoints", [])
-  
+
   private_endpoint_network_policies_enabled     = lookup(each.value, "private_endpoint_network_policies_enabled", true)
   private_link_service_network_policies_enabled = lookup(each.value, "private_link_service_network_policies_enabled", true)
-  
+
   dynamic "delegation" {
     for_each = lookup(each.value, "delegation", null) != null ? [each.value.delegation] : []
-    
+
     content {
       name = delegation.value.name
-      
+
       service_delegation {
         name    = delegation.value.service_delegation.name
         actions = delegation.value.service_delegation.actions
@@ -39,18 +39,18 @@ resource "azurerm_subnet" "subnets" {
 # Network Security Groups
 resource "azurerm_network_security_group" "main" {
   for_each = var.subnets
-  
+
   name                = "${each.value.name}-nsg"
   location            = var.location
   resource_group_name = var.resource_group_name
-  
+
   tags = var.tags
 }
 
 # NSG Association
 resource "azurerm_subnet_network_security_group_association" "main" {
   for_each = var.subnets
-  
+
   subnet_id                 = azurerm_subnet.subnets[each.key].id
   network_security_group_id = azurerm_network_security_group.main[each.key].id
 }
@@ -58,7 +58,7 @@ resource "azurerm_subnet_network_security_group_association" "main" {
 # Default NSG Rules - Allow internal traffic
 resource "azurerm_network_security_rule" "allow_internal" {
   for_each = var.subnets
-  
+
   name                        = "AllowVnetInBound"
   priority                    = 100
   direction                   = "Inbound"
@@ -75,32 +75,32 @@ resource "azurerm_network_security_rule" "allow_internal" {
 # Public IP for NAT Gateway (optional)
 resource "azurerm_public_ip" "nat" {
   count = var.enable_nat_gateway ? 1 : 0
-  
+
   name                = "${var.vnet_name}-nat-pip"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
-  
+
   tags = var.tags
 }
 
 # NAT Gateway (optional)
 resource "azurerm_nat_gateway" "main" {
   count = var.enable_nat_gateway ? 1 : 0
-  
+
   name                = "${var.vnet_name}-nat"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = "Standard"
-  
+
   tags = var.tags
 }
 
 # NAT Gateway Public IP Association
 resource "azurerm_nat_gateway_public_ip_association" "main" {
   count = var.enable_nat_gateway ? 1 : 0
-  
+
   nat_gateway_id       = azurerm_nat_gateway.main.id
   public_ip_address_id = azurerm_public_ip.nat.id
 }

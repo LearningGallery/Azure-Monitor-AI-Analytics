@@ -1,7 +1,7 @@
 variable "key_vault_name" {
   description = "Key Vault name"
   type        = string
-  
+
   validation {
     condition     = can(regex("^[a-zA-Z0-9-]{3,24}$", var.key_vault_name))
     error_message = "Key Vault name must be 3-24 characters, alphanumeric and hyphens only"
@@ -27,7 +27,7 @@ variable "sku_name" {
   description = "Key Vault SKU"
   type        = string
   default     = "standard"
-  
+
   validation {
     condition     = contains(["standard", "premium"], var.sku_name)
     error_message = "SKU must be either 'standard' or 'premium'"
@@ -68,7 +68,7 @@ variable "soft_delete_retention_days" {
   description = "Soft delete retention days"
   type        = number
   default     = 90
-  
+
   validation {
     condition     = var.soft_delete_retention_days >= 7 && var.soft_delete_retention_days <= 90
     error_message = "Retention must be between 7 and 90 days"
