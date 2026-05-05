@@ -20,6 +20,15 @@ resource "azurerm_container_app" "apps" {
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
 
+  identity {
+    type = "SystemAssigned"
+  }
+  
+  registry {
+    server   = split("/", each.value.image)[0]  # Extract registry from image
+    identity = "system"  # Use system-assigned managed identity
+  }
+
   template {
     container {
       name   = each.value.name

@@ -84,3 +84,4 @@ resource "azurerm_log_analytics_query_pack" "enterprise" {
 
   tags = var.tags
 }
+

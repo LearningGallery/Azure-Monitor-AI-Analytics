@@ -72,7 +72,7 @@ module "networking" {
 # Storage Account for Log Archives
 module "storage" {
   source = "./modules/storage"
-
+  depends_on = [module.ampls]
   resource_group_name  = azurerm_resource_group.main.name
   location             = var.location
   storage_account_name = "${replace(local.prefix, "-", "")}sa"
@@ -320,7 +320,7 @@ module "container_apps" {
   apps = {
     ai_api = {
       name         = "ai-log-api"
-      image        = "${var.acr_name}.azurecr.io/ai-log-api:latest"
+      image        = "${azurerm_container_registry.main.login_server}/ai-log-api:latest"
       cpu          = 1.0
       memory       = "2Gi"
       min_replicas = 1
@@ -405,6 +405,28 @@ resource "azurerm_monitor_diagnostic_setting" "storage" {
     category = "Transaction"
     enabled  = true
   }
+}
+
+# Azure Container Registry
+resource "azurerm_container_registry" "main" {
+  name                = var.acr_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  sku                 = "Basic"  # Basic, Standard, or Premium
+  admin_enabled       = true     # Enable for initial setup
+  
+  tags = local.common_tags
+}
+
+# Grant Container App identity permission to pull images from ACR
+resource "azurerm_role_assignment" "container_app_acr_pull" {
+  scope                = azurerm_container_registry.main.id
+  role_definition_name = "AcrPull"
+  principal_id         = module.container_apps.system_assigned_identity_principal_id
+  
+  depends_on = [
+    module.container_apps
+  ]
 }
 
 # Data Sources

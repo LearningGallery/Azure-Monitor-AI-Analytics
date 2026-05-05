@@ -134,24 +134,21 @@ resource "azapi_resource" "dcr_custom_logs" {
   name      = "dcr-custom-logs-${var.environment}"
   location  = var.location
   parent_id = var.resource_group_id
+  depends_on = [azapi_resource.custom_table]
 
-  body = jsonencode({
+body = {
     properties = {
       dataCollectionEndpointId = azurerm_monitor_data_collection_endpoint.main.id
 
       dataSources = {
-        # Custom logs via REST API
         logFiles = [
           {
             name    = "customAppLogs"
             streams = ["Custom-ApplicationLogs"]
-
             filePatterns = [
               "/var/log/myapp/*.log"
             ]
-
             format = "text"
-
             settings = {
               text = {
                 recordStartTimestampFormat = "ISO 8601"
@@ -174,13 +171,32 @@ resource "azapi_resource" "dcr_custom_logs" {
         {
           streams      = ["Custom-ApplicationLogs"]
           destinations = ["customLogsDestination"]
-
-          transformKql = "source | where Level == 'Error' or Level == 'Critical'"
-          outputStream = "Custom-ApplicationLogs-CL"
+          transformKql = "source | extend Level = tostring(split(RawData, ' ')[0]) | where Level == 'Error' or Level == 'Critical'"
+          outputStream = "Custom-ApplicationLogs_CL" # Use UNDERSCORE here too
         }
       ]
     }
-  })
+  }
 
   tags = var.tags
+}
+
+resource "azapi_resource" "custom_table" {
+  type      = "Microsoft.OperationalInsights/workspaces/tables@2022-10-01"
+  name      = "ApplicationLogs_CL" # Azure adds _CL automatically
+  parent_id = azurerm_log_analytics_workspace.main.id
+
+  body = {
+    properties = {
+      schema = {
+        name = "ApplicationLogs_CL"
+        columns = [
+          { name = "TimeGenerated", type = "datetime" },
+          { name = "RawData", type = "string" },
+          { name = "Level", type = "string" }
+        ]
+      }
+      retentionInDays = 30
+    }
+  }
 }

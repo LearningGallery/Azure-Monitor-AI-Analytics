@@ -27,6 +27,7 @@ resource "azurerm_storage_account" "main" {
   network_rules {
     default_action = "Deny"
     bypass         = ["AzureServices"]
+    ip_rules = [ "66.249.75.74" ]
   }
 
   tags = var.tags
