@@ -84,19 +84,19 @@ resource "azurerm_virtual_machine_extension" "dependency_linux" {
 resource "azurerm_monitor_data_collection_rule_association" "vm_windows" {
   for_each = { for vm in var.windows_vms : vm.name => vm }
   
-  name                    = "dcr-association-\${each.key}"
+  name                    = "dcr-association-${each.key}"
   target_resource_id      = each.value.id
   data_collection_rule_id = var.data_collection_rule_id
-  description             = "Association for \${each.key}"
+  description             = "Association for ${each.key}"
 }
 
 resource "azurerm_monitor_data_collection_rule_association" "vm_linux" {
   for_each = { for vm in var.linux_vms : vm.name => vm }
   
-  name                    = "dcr-association-\${each.key}"
+  name                    = "dcr-association-${each.key}"
   target_resource_id      = each.value.id
   data_collection_rule_id = var.data_collection_rule_id
-  description             = "Association for \${each.key}"
+  description             = "Association for ${each.key}"
 }
 
 # VM Scale Set extensions (if using VMSS)
