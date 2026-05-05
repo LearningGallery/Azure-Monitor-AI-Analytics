@@ -2,7 +2,7 @@ project_name     = "ailoganalytics"
 environment      = "dev"
 location         = "southeastasia"
 cost_center      = "IT-Development"
-owner_email      = "your.email@company.com"
+owner_email      = "abutalha3005@gmail.com"
 
 # Networking
 vnet_address_space = ["10.10.0.0/16"]
@@ -21,7 +21,7 @@ enable_geo_redundancy = false
 enable_prometheus     = false  # Disable for dev to save costs
 
 # Container Registry
-acr_name = "yourcompanyacr"  # Replace with your ACR name
+acr_name = "LearningGallery"  # Replace with your ACR name
 
 tags = {
   Department = "Engineering"
