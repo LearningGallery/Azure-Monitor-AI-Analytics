@@ -42,7 +42,7 @@ resource "azurerm_private_dns_zone" "blob" {
 
 # Link DNS Zones to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "monitor" {
-  name                  = "\${var.ampls_name}-monitor-link"
+  name                  = "${var.ampls_name}-monitor-link"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.monitor.name
   virtual_network_id    = var.vnet_id
@@ -52,7 +52,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "monitor" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "oms" {
-  name                  = "\${var.ampls_name}-oms-link"
+  name                  = "${var.ampls_name}-oms-link"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.oms.name
   virtual_network_id    = var.vnet_id
@@ -62,7 +62,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "oms" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "ods" {
-  name                  = "\${var.ampls_name}-ods-link"
+  name                  = "${var.ampls_name}-ods-link"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.ods.name
   virtual_network_id    = var.vnet_id
@@ -72,7 +72,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "ods" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "agentsvc" {
-  name                  = "\${var.ampls_name}-agentsvc-link"
+  name                  = "${var.ampls_name}-agentsvc-link"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.agentsvc.name
   virtual_network_id    = var.vnet_id
@@ -82,7 +82,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "agentsvc" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "blob" {
-  name                  = "\${var.ampls_name}-blob-link"
+  name                  = "${var.ampls_name}-blob-link"
   resource_group_name   = var.resource_group_name
   private_dns_zone_name = azurerm_private_dns_zone.blob.name
   virtual_network_id    = var.vnet_id

@@ -8,12 +8,12 @@ locals {
   }
   
   # Naming convention
-  prefix = "\${var.project_name}-\${var.environment}"
+  prefix = "${var.project_name}-${var.environment}"
 }
 
 # Resource Group
 resource "azurerm_resource_group" "main" {
-  name     = "\${local.prefix}-rg"
+  name     = "${local.prefix}-rg"
   location = var.location
   
   tags = local.common_tags
@@ -25,7 +25,7 @@ module "networking" {
   
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
-  vnet_name           = "\${local.prefix}-vnet"
+  vnet_name           = "${local.prefix}-vnet"
   address_space       = var.vnet_address_space
   
   subnets = {
@@ -75,7 +75,7 @@ module "storage" {
   
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
-  storage_account_name = "\${replace(local.prefix, "-", "")}sa"
+  storage_account_name = "${replace(local.prefix, "-", "")}sa"
   
   # Security settings
   enable_https_traffic_only       = true
@@ -114,7 +114,7 @@ module "key_vault" {
   
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
-  key_vault_name      = "\${local.prefix}-kv"
+  key_vault_name      = "${local.prefix}-kv"
   
   # Permissions
   tenant_id = data.azurerm_client_config.current.tenant_id
@@ -137,7 +137,7 @@ module "key_vault" {
 module "log_analytics_primary" {
   source = "./modules/log-analytics"
   
-  workspace_name      = "\${local.prefix}-law-primary"
+  workspace_name      = "${local.prefix}-law-primary"
   resource_group_name = azurerm_resource_group.main.name
   resource_group_id   = azurerm_resource_group.main.id
   location            = var.location
@@ -177,17 +177,17 @@ module "log_analytics_primary" {
     failed_login_attempts = {
       category     = "Security"
       display_name = "Failed Login Attempts (Last 24h)"
-      query        = file("\${path.module}/../kql/queries/security/failed-logins.kql")
+      query        = file("${path.module}/../kql/queries/security/failed-logins.kql")
     }
     high_cpu_vms = {
       category     = "Performance"
       display_name = "VMs with High CPU Usage"
-      query        = file("\${path.module}/../kql/queries/vm-insights/performance.kql")
+      query        = file("${path.module}/../kql/queries/vm-insights/performance.kql")
     }
     aks_pod_failures = {
       category     = "Containers"
       display_name = "AKS Pod Failures"
-      query        = file("\${path.module}/../kql/queries/aks/pod-failures.kql")
+      query        = file("${path.module}/../kql/queries/aks/pod-failures.kql")
     }
   }
   
@@ -205,7 +205,7 @@ module "log_analytics_secondary" {
   
   source = "./modules/log-analytics"
   
-  workspace_name      = "\${local.prefix}-law-secondary"
+  workspace_name      = "${local.prefix}-law-secondary"
   resource_group_name = azurerm_resource_group.main.name
   resource_group_id   = azurerm_resource_group.main.id
   location            = var.secondary_location
@@ -228,7 +228,7 @@ module "log_analytics_secondary" {
 module "ampls" {
   source = "./modules/ampls"
   
-  ampls_name          = "\${local.prefix}-ampls"
+  ampls_name          = "${local.prefix}-ampls"
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   
@@ -257,7 +257,7 @@ module "ampls" {
 module "aks" {
   source = "./modules/aks"
   
-  cluster_name        = "\${local.prefix}-aks"
+  cluster_name        = "${local.prefix}-aks"
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   dns_prefix          = local.prefix
@@ -301,7 +301,7 @@ module "aks" {
 module "container_apps" {
   source = "./modules/container-apps"
   
-  environment_name    = "\${local.prefix}-containerenv"
+  environment_name    = "${local.prefix}-containerenv"
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   
@@ -316,7 +316,7 @@ module "container_apps" {
   apps = {
     ai_api = {
       name     = "ai-log-api"
-      image    = "\${var.acr_name}.azurecr.io/ai-log-api:latest"
+      image    = "${var.acr_name}.azurecr.io/ai-log-api:latest"
       cpu      = 1.0
       memory   = "2Gi"
       min_replicas = 1
@@ -382,7 +382,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks" {
 
 resource "azurerm_monitor_diagnostic_setting" "storage" {
   name                       = "storage-diagnostics"
-  target_resource_id         = "\${module.storage.storage_account_id}/blobServices/default"
+  target_resource_id         = "${module.storage.storage_account_id}/blobServices/default"
   log_analytics_workspace_id = module.log_analytics_primary.workspace_id
   
   enabled_log {

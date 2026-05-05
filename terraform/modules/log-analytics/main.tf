@@ -45,7 +45,7 @@ resource "azurerm_log_analytics_solution" "solutions" {
   
   plan {
     publisher = "Microsoft"
-    product   = "OMSGallery/\${each.value}"
+    product   = "OMSGallery/${each.value}"
   }
   
   tags = var.tags
@@ -78,7 +78,7 @@ resource "azurerm_log_analytics_saved_search" "common_queries" {
 resource "azurerm_log_analytics_query_pack" "enterprise" {
   count = var.create_query_pack ? 1 : 0
   
-  name                = "\${var.workspace_name}-querypack"
+  name                = "${var.workspace_name}-querypack"
   location            = var.location
   resource_group_name = var.resource_group_name
   

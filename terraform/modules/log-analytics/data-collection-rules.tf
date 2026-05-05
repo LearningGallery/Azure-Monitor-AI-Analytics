@@ -1,6 +1,6 @@
 # Data Collection Endpoint (required for DCR)
 resource "azurerm_monitor_data_collection_endpoint" "main" {
-  name                          = "\${var.workspace_name}-dce"
+  name                          = "${var.workspace_name}-dce"
   resource_group_name           = var.resource_group_name
   location                      = var.location
   kind                          = "Linux"  # or "Windows"
@@ -11,7 +11,7 @@ resource "azurerm_monitor_data_collection_endpoint" "main" {
 
 # Data Collection Rule for VMs (OS logs)
 resource "azurerm_monitor_data_collection_rule" "vm_insights" {
-  name                        = "dcr-vm-insights-\${var.environment}"
+  name                        = "dcr-vm-insights-${var.environment}"
   resource_group_name         = var.resource_group_name
   location                    = var.location
   data_collection_endpoint_id = azurerm_monitor_data_collection_endpoint.main.id
@@ -91,7 +91,7 @@ resource "azurerm_monitor_data_collection_rule" "vm_insights" {
 resource "azurerm_monitor_data_collection_rule" "container_insights" {
   count = var.enable_container_insights ? 1 : 0
   
-  name                        = "dcr-container-insights-\${var.environment}"
+  name                        = "dcr-container-insights-${var.environment}"
   resource_group_name         = var.resource_group_name
   location                    = var.location
   data_collection_endpoint_id = azurerm_monitor_data_collection_endpoint.main.id
@@ -131,7 +131,7 @@ resource "azurerm_monitor_data_collection_rule" "container_insights" {
 # DCR for Azure Monitor Agent (AMA)
 resource "azapi_resource" "dcr_custom_logs" {
   type      = "Microsoft.Insights/dataCollectionRules@2022-06-01"
-  name      = "dcr-custom-logs-\${var.environment}"
+  name      = "dcr-custom-logs-${var.environment}"
   location  = var.location
   parent_id = var.resource_group_id
   

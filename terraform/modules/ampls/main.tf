@@ -16,7 +16,7 @@ resource "azurerm_monitor_private_link_scope" "main" {
 resource "azurerm_monitor_private_link_scoped_service" "workspaces" {
   for_each = toset(var.workspace_ids)
   
-  name                = "ampls-link-\${replace(each.value, "/", "-")}"
+  name                = "ampls-link-${replace(each.value, "/", "-")}"
   resource_group_name = var.resource_group_name
   scope_name          = azurerm_monitor_private_link_scope.main.name
   linked_resource_id  = each.value
@@ -26,7 +26,7 @@ resource "azurerm_monitor_private_link_scoped_service" "workspaces" {
 resource "azurerm_monitor_private_link_scoped_service" "app_insights" {
   for_each = toset(var.app_insights_ids)
   
-  name                = "ampls-link-ai-\${replace(each.value, "/", "-")}"
+  name                = "ampls-link-ai-${replace(each.value, "/", "-")}"
   resource_group_name = var.resource_group_name
   scope_name          = azurerm_monitor_private_link_scope.main.name
   linked_resource_id  = each.value
@@ -36,7 +36,7 @@ resource "azurerm_monitor_private_link_scoped_service" "app_insights" {
 resource "azurerm_monitor_private_link_scoped_service" "dce" {
   for_each = toset(var.data_collection_endpoint_ids)
   
-  name                = "ampls-link-dce-\${replace(each.value, "/", "-")}"
+  name                = "ampls-link-dce-${replace(each.value, "/", "-")}"
   resource_group_name = var.resource_group_name
   scope_name          = azurerm_monitor_private_link_scope.main.name
   linked_resource_id  = each.value

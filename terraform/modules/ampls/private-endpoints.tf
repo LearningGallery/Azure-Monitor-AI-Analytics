@@ -1,12 +1,12 @@
 # Private Endpoint for AMPLS
 resource "azurerm_private_endpoint" "ampls" {
-  name                = "\${var.ampls_name}-pe"
+  name                = "${var.ampls_name}-pe"
   location            = var.location
   resource_group_name = var.resource_group_name
   subnet_id           = var.subnet_id
   
   private_service_connection {
-    name                           = "\${var.ampls_name}-psc"
+    name                           = "${var.ampls_name}-psc"
     private_connection_resource_id = azurerm_monitor_private_link_scope.main.id
     is_manual_connection           = false
     subresource_names              = ["azuremonitor"]
