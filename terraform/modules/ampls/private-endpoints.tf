@@ -28,7 +28,7 @@ resource "azurerm_private_endpoint" "ampls" {
 
 # Network Interface for Private Endpoint
 data "azurerm_network_interface" "ampls_pe_nic" {
-  name                = azurerm_private_endpoint.ampls.network_interface.name
+  name                = azurerm_private_endpoint.ampls.network_interface[0].name
   resource_group_name = var.resource_group_name
 
   depends_on = [azurerm_private_endpoint.ampls]

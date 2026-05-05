@@ -25,8 +25,8 @@ variable "vnet_id" {
 
 variable "workspace_ids" {
   description = "List of Log Analytics Workspace IDs to link"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "app_insights_ids" {
@@ -37,8 +37,8 @@ variable "app_insights_ids" {
 
 variable "data_collection_endpoint_ids" {
   description = "List of Data Collection Endpoint IDs to link"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "ingestion_access_mode" {

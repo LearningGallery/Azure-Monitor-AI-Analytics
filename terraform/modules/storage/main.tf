@@ -8,7 +8,8 @@ resource "azurerm_storage_account" "main" {
   account_kind             = var.account_kind
 
   min_tls_version                 = var.min_tls_version
-  enable_https_traffic_only       = var.enable_https_traffic_only
+  #enable_https_traffic_only       = var.enable_https_traffic_only
+  https_traffic_only_enabled       = var.enable_https_traffic_only
   allow_nested_items_to_be_public = var.allow_nested_items_to_be_public
 
   blob_properties {
@@ -71,7 +72,7 @@ resource "azurerm_storage_management_policy" "main" {
 
 # Private Endpoint
 resource "azurerm_private_endpoint" "storage" {
-  count = var.subnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                = "${var.storage_account_name}-pe"
   location            = var.location
@@ -87,7 +88,7 @@ resource "azurerm_private_endpoint" "storage" {
 
   private_dns_zone_group {
     name                 = "storage-dns-zone-group"
-    private_dns_zone_ids = [azurerm_private_dns_zone.storage.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.storage[0].id]
   }
 
   tags = var.tags
@@ -95,7 +96,7 @@ resource "azurerm_private_endpoint" "storage" {
 
 # Private DNS Zone
 resource "azurerm_private_dns_zone" "storage" {
-  count = var.subnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = var.resource_group_name
@@ -105,11 +106,11 @@ resource "azurerm_private_dns_zone" "storage" {
 
 # DNS Zone VNet Link
 resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
-  count = var.subnet_id != null && var.vnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                  = "${var.storage_account_name}-dns-link"
   resource_group_name   = var.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.storage.name
+  private_dns_zone_name = azurerm_private_dns_zone.storage[0].name
   virtual_network_id    = var.vnet_id
 
   tags = var.tags

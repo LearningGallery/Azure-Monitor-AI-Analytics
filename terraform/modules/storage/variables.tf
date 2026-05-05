@@ -110,3 +110,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_private_endpoint" {
+  type        = bool
+  description = "Whether to enable a private endpoint for the storage account"
+  default     = false
+}

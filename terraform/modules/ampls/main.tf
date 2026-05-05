@@ -14,9 +14,10 @@ resource "azurerm_monitor_private_link_scope" "main" {
 
 # Link Log Analytics Workspaces to AMPLS
 resource "azurerm_monitor_private_link_scoped_service" "workspaces" {
-  for_each = toset(var.workspace_ids)
+  # Filter the map to remove null values
+  for_each = var.workspace_ids
 
-  name                = "ampls-link-${replace(each.value, "/", "-")}"
+  name                = "ampls-link-${each.key}"
   resource_group_name = var.resource_group_name
   scope_name          = azurerm_monitor_private_link_scope.main.name
   linked_resource_id  = each.value
@@ -34,9 +35,9 @@ resource "azurerm_monitor_private_link_scoped_service" "app_insights" {
 
 # Link Data Collection Endpoints
 resource "azurerm_monitor_private_link_scoped_service" "dce" {
-  for_each = toset(var.data_collection_endpoint_ids)
+  for_each = var.data_collection_endpoint_ids
 
-  name                = "ampls-link-dce-${replace(each.value, "/", "-")}"
+  name                = "ampls-link-dce-${each.key}"
   resource_group_name = var.resource_group_name
   scope_name          = azurerm_monitor_private_link_scope.main.name
   linked_resource_id  = each.value

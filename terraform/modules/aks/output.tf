@@ -16,5 +16,5 @@ output "kube_config" {
 
 output "identity_principal_id" {
   description = "AKS identity principal ID"
-  value       = azurerm_kubernetes_cluster.main.identity.principal_id
+  value       = azurerm_kubernetes_cluster.main.identity[0].principal_id
 }

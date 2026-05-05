@@ -40,7 +40,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 
 # DCR Association
 resource "azurerm_monitor_data_collection_rule_association" "aks" {
-  count = var.data_collection_rule_id != null ? 1 : 0
+  count = var.enable_monitoring ? 1 : 0
 
   name                    = "${var.cluster_name}-dcr-association"
   target_resource_id      = azurerm_kubernetes_cluster.main.id

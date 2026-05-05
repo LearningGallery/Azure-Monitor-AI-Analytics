@@ -31,7 +31,7 @@ module "networking" {
   subnets = {
     monitoring = {
       name             = "snet-monitoring"
-      address_prefixes = [cidrsubnet(var.vnet_address_space, 4, 0)]
+      address_prefixes = [cidrsubnet(var.vnet_address_space[0], 4, 0)]
       service_endpoints = [
         "Microsoft.Storage",
         "Microsoft.KeyVault",
@@ -41,7 +41,7 @@ module "networking" {
     }
     aks = {
       name             = "snet-aks"
-      address_prefixes = [cidrsubnet(var.vnet_address_space, 2, 1)]
+      address_prefixes = [cidrsubnet(var.vnet_address_space[0], 2, 1)]
       service_endpoints = [
         "Microsoft.Storage",
         "Microsoft.ContainerRegistry"
@@ -49,11 +49,11 @@ module "networking" {
     }
     vms = {
       name             = "snet-vms"
-      address_prefixes = [cidrsubnet(var.vnet_address_space, 4, 1)]
+      address_prefixes = [cidrsubnet(var.vnet_address_space[0], 4, 1)]
     }
     containers = {
       name             = "snet-containers"
-      address_prefixes = [cidrsubnet(var.vnet_address_space, 4, 2)]
+      address_prefixes = [cidrsubnet(var.vnet_address_space[0], 4, 2)]
       delegation = {
         name = "Microsoft.App/environments"
         service_delegation = {
@@ -76,6 +76,7 @@ module "storage" {
   resource_group_name  = azurerm_resource_group.main.name
   location             = var.location
   storage_account_name = "${replace(local.prefix, "-", "")}sa"
+  enable_private_endpoint = true
 
   # Security settings
   enable_https_traffic_only       = true
@@ -115,7 +116,7 @@ module "key_vault" {
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   key_vault_name      = "${local.prefix}-kv"
-
+  enable_private_endpoint = true
   # Permissions
   tenant_id = data.azurerm_client_config.current.tenant_id
 
@@ -237,14 +238,16 @@ module "ampls" {
   vnet_id   = module.networking.vnet_id
 
   # Linked resources
-  workspace_ids = concat(
-    [module.log_analytics_primary.workspace_id],
-    var.enable_geo_redundancy ? [module.log_analytics_secondary.workspace_id] : []
-  )
+  workspace_ids = var.enable_geo_redundancy ? {
+      primary   = module.log_analytics_primary.workspace_id
+      secondary = module.log_analytics_secondary[0].workspace_id
+    } : {
+      primary   = module.log_analytics_primary.workspace_id
+  }
 
-  data_collection_endpoint_ids = [
-    module.log_analytics_primary.data_collection_endpoint_id
-  ]
+  data_collection_endpoint_ids = {
+    primary = module.log_analytics_primary.data_collection_endpoint_id
+  }
 
   # Access modes (PrivateOnly for maximum security)
   ingestion_access_mode = "PrivateOnly"
@@ -260,6 +263,7 @@ module "aks" {
   cluster_name        = "${local.prefix}-aks"
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
+  enable_monitoring = true
   dns_prefix          = local.prefix
 
   # Networking

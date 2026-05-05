@@ -19,7 +19,9 @@ resource "azurerm_subnet" "subnets" {
 
   service_endpoints = lookup(each.value, "service_endpoints", [])
 
-  private_endpoint_network_policies_enabled     = lookup(each.value, "private_endpoint_network_policies_enabled", true)
+  #private_endpoint_network_policies_enabled     = lookup(each.value, "private_endpoint_network_policies_enabled", true)
+  # We use try() to ensure if the key is missing OR null, it falls back to true
+  private_endpoint_network_policies = coalesce(each.value.private_endpoint_network_policies_enabled, true) ? "Enabled" : "Disabled"
   private_link_service_network_policies_enabled = lookup(each.value, "private_link_service_network_policies_enabled", true)
 
   dynamic "delegation" {
@@ -101,6 +103,6 @@ resource "azurerm_nat_gateway" "main" {
 resource "azurerm_nat_gateway_public_ip_association" "main" {
   count = var.enable_nat_gateway ? 1 : 0
 
-  nat_gateway_id       = azurerm_nat_gateway.main.id
-  public_ip_address_id = azurerm_public_ip.nat.id
+  nat_gateway_id       = azurerm_nat_gateway.main[0].id
+  public_ip_address_id = azurerm_public_ip.nat[0].id
 }

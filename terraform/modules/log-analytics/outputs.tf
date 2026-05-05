@@ -38,5 +38,5 @@ output "dcr_vm_insights_id" {
 
 output "dcr_container_insights_id" {
   description = "Container Insights DCR ID"
-  value       = var.enable_container_insights ? azurerm_monitor_data_collection_rule.container_insights.id : null
+  value       = var.enable_container_insights ? azurerm_monitor_data_collection_rule.container_insights[0].id : null
 }

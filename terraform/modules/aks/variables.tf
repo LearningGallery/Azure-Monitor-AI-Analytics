@@ -100,3 +100,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_monitoring" {
+  type    = bool
+  default = false
+}

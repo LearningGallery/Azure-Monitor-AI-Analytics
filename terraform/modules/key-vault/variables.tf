@@ -92,3 +92,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_private_endpoint" {
+  type        = bool
+  description = "Controls whether the Private Endpoint and DNS resources are created"
+  default     = false
+}

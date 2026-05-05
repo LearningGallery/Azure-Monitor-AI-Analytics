@@ -27,7 +27,7 @@ resource "azurerm_key_vault" "main" {
 
 # Private Endpoint
 resource "azurerm_private_endpoint" "kv" {
-  count = var.subnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                = "${var.key_vault_name}-pe"
   location            = var.location
@@ -43,7 +43,7 @@ resource "azurerm_private_endpoint" "kv" {
 
   private_dns_zone_group {
     name                 = "kv-dns-zone-group"
-    private_dns_zone_ids = [azurerm_private_dns_zone.kv.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.kv[0].id]
   }
 
   tags = var.tags
@@ -51,7 +51,7 @@ resource "azurerm_private_endpoint" "kv" {
 
 # Private DNS Zone
 resource "azurerm_private_dns_zone" "kv" {
-  count = var.subnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                = "privatelink.vaultcore.azure.net"
   resource_group_name = var.resource_group_name
@@ -61,11 +61,11 @@ resource "azurerm_private_dns_zone" "kv" {
 
 # DNS Zone VNet Link
 resource "azurerm_private_dns_zone_virtual_network_link" "kv" {
-  count = var.subnet_id != null && var.vnet_id != null ? 1 : 0
+  count = var.enable_private_endpoint ? 1 : 0
 
   name                  = "${var.key_vault_name}-dns-link"
   resource_group_name   = var.resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.kv.name
+  private_dns_zone_name = azurerm_private_dns_zone.kv[0].name
   virtual_network_id    = var.vnet_id
 
   tags = var.tags
