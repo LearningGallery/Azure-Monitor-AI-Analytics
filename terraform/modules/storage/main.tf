@@ -1,4 +1,5 @@
 # Storage Account
+data "http" "current_ip" {  url = "https://ipv4.icanhazip.com"}
 resource "azurerm_storage_account" "main" {
   name                     = var.storage_account_name
   resource_group_name      = var.resource_group_name
@@ -27,7 +28,7 @@ resource "azurerm_storage_account" "main" {
   network_rules {
     default_action = "Deny"
     bypass         = ["AzureServices"]
-    ip_rules = [ "66.249.75.74" ]
+    ip_rules = compact([ "220.255.155.95", chomp(data.http.current_ip.response_body), var.runner_ip != "" ? var.runner_ip : ""])
   }
 
   tags = var.tags
@@ -89,12 +90,13 @@ resource "azurerm_private_endpoint" "storage" {
 
   private_dns_zone_group {
     name                 = "storage-dns-zone-group"
-    private_dns_zone_ids = [azurerm_private_dns_zone.storage[0].id]
+    private_dns_zone_ids = [var.private_dns_zone_id]
   }
 
   tags = var.tags
 }
 
+/*
 # Private DNS Zone
 resource "azurerm_private_dns_zone" "storage" {
   count = var.enable_private_endpoint ? 1 : 0
@@ -104,6 +106,7 @@ resource "azurerm_private_dns_zone" "storage" {
 
   tags = var.tags
 }
+
 
 # DNS Zone VNet Link
 resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
@@ -116,3 +119,4 @@ resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
 
   tags = var.tags
 }
+*/

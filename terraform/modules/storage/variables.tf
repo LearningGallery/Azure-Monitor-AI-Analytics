@@ -116,3 +116,14 @@ variable "enable_private_endpoint" {
   description = "Whether to enable a private endpoint for the storage account"
   default     = false
 }
+variable "private_dns_zone_id" {
+  type        = string
+  description = "The ID of the existing Private DNS Zone for Blob Storage"
+  default     = null
+}
+
+variable "runner_ip" {
+  description = "The dynamic IP of the GitHub Actions runner"
+  type        = string
+  default     = "" # Default to empty so it doesn't break local runs
+}

@@ -106,3 +106,11 @@ resource "azurerm_nat_gateway_public_ip_association" "main" {
   nat_gateway_id       = azurerm_nat_gateway.main[0].id
   public_ip_address_id = azurerm_public_ip.nat[0].id
 }
+
+resource "azurerm_subnet_nat_gateway_association" "main" {
+  # We use the keys of var.subnets to loop through them, but only if enable_nat_gateway is true
+  for_each = var.enable_nat_gateway ? var.subnets : {}
+
+  subnet_id      = azurerm_subnet.subnets[each.key].id
+  nat_gateway_id = azurerm_nat_gateway.main[0].id
+}

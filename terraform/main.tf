@@ -27,6 +27,7 @@ module "networking" {
   location            = var.location
   vnet_name           = "${local.prefix}-vnet"
   address_space       = var.vnet_address_space
+  enable_nat_gateway = true
 
   subnets = {
     monitoring = {
@@ -86,7 +87,8 @@ module "storage" {
   # Private endpoint
   subnet_id = module.networking.subnet_ids["monitoring"]
   vnet_id   = module.networking.vnet_id
-
+  private_dns_zone_id     = module.ampls.dns_zone_ids["blob"]
+  
   # Lifecycle management for cost optimization
   enable_lifecycle_management = true
   lifecycle_rules = {
@@ -320,7 +322,7 @@ module "container_apps" {
   apps = {
     ai_api = {
       name         = "ai-log-api"
-      image        = "${azurerm_container_registry.main.login_server}/ai-log-api:latest"
+      image        = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
       cpu          = 1.0
       memory       = "2Gi"
       min_replicas = 1
@@ -418,6 +420,7 @@ resource "azurerm_container_registry" "main" {
   tags = local.common_tags
 }
 
+/*
 # Grant Container App identity permission to pull images from ACR
 resource "azurerm_role_assignment" "container_app_acr_pull" {
   scope                = azurerm_container_registry.main.id
@@ -428,6 +431,7 @@ resource "azurerm_role_assignment" "container_app_acr_pull" {
     module.container_apps
   ]
 }
+*/
 
 # Data Sources
 data "azurerm_client_config" "current" {}

@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [dev, staging, prod]
+        environment: [dev]
     
     permissions:
       contents: read
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: \${{ env.TF_VERSION }}
+          terraform_version: ${{ env.TF_VERSION }}
       
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -52,7 +52,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: \${{ env.WORKING_DIR }}\${{ matrix.environment }}
+        working-directory: ${{ env.WORKING_DIR }}/${{ matrix.environment }}
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -62,41 +62,46 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: \${{ env.WORKING_DIR }}\${{ matrix.environment }}
+        working-directory: ${{ env.WORKING_DIR }}/${{ matrix.environment }}
+      
+      - name: Get GitHub Runner IP
+        id: ip
+        uses: haythem/public-ip@v1.3
       
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -out=tfplan
-        working-directory: \${{ env.WORKING_DIR }}\${{ matrix.environment }}
+        working-directory: ${{ env.WORKING_DIR }}/${{ matrix.environment }}
         env:
-          ARM_CLIENT_ID: \${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: \${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: \${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: \${{ secrets.AZURE_TENANT_ID }}
-          TF_VAR_huggingface_api_key: \${{ secrets.HUGGINGFACE_API_KEY }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_huggingface_api_key: ${{ secrets.HUGGINGFACE_API_KEY }}
+          TF_VAR_runner_ip: ${{ steps.ip.outputs.ipv4 }}
         continue-on-error: true
       
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan-\${{ matrix.environment }}
-          path: \${{ env.WORKING_DIR }}\${{ matrix.environment }}/tfplan
+          name: tfplan-${{ matrix.environment }}
+          path: ${{ env.WORKING_DIR }}/${{ matrix.environment }}/tfplan
           retention-days: 5
       
       - name: Post Plan to PR
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         env:
-          PLAN: \${{ steps.plan.outputs.stdout }}
+          PLAN: ${{ steps.plan.outputs.stdout }}
         with:
-          github-token: \${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Format and Style 🖌 \`\${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️ \`\${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖 \`\${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖 \`\${{ steps.plan.outcome }}\`
             
-            <details><summary>Show Plan - \${{ matrix.environment }}</summary>
+            <details><summary>Show Plan - ${{ matrix.environment }}</summary>
             
             \`\`\`terraform
             \${process.env.PLAN}
