@@ -12,7 +12,7 @@ on:
 
 env:
   TF_VERSION: '1.6.0'
-  WORKING_DIR: './terraform/environments'
+  WORKING_DIR: '/terraform/environments'
 
 jobs:
   terraform-plan:
